@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/bloodhound.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <form method="get" action="{% url 'search' %}">
+        <label for="search_input">Search:</label>
+        <input type="text" id="search_input" name="q" >
+        <button type="submit">Search</button>
+    </form>
+    {% if queryset %}
+        <form method="post" action="{% url 'search' %}">
+            {% csrf_token %}
+            <input type="hidden" name="q" value="{{ request.GET.q }}">
+            <button type="submit" name="download" value="download">Download Results</button>
+        </form>
+    {% endif %}
+    <ul>
+        {% for entry in queryset %}
+            <li>{{ entry.Covered_Recipient_First_Name  }} {{ entry.Covered_Recipient_Last_Name }} {{entry.Total_Amount_of_Payment_USDollars }}  {{ entry.Date_of_Payment }}</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        $(document).ready(function() {
+            var items = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/paymentswebapp/typeahead/?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#search_input').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'items',
+                display: 'name',
+                source: items
+            });
+        });
+    </script>
+</body>
+</html>
