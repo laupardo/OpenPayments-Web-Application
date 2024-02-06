@@ -24,7 +24,7 @@ The OpenPayments Web Application is a Django-based web application that allows u
 
    ```bash
    git clone https://github.com/yourusername/openpayments-webapp.git
-   cd openpayments-webapp
+   cd openpaymentswebapp
    ```
 2. Clone the repository:
    ```bash
